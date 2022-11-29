@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="image">
+
+   <!--  Product Image -->
+   <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 포전매매 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+    
+   <!-- 상품 등록 이미지 -->
+   <insert id="tradeAddImage" parameterType="Image">
+      INSERT INTO IMAGE 
+         VALUES (IMG_NO_SEQ.NEXTVAL, 
+         NULL, 
+         NULL, 
+         #{trade_NO}, 
+         NULL, 
+         'P', 
+         SYSDATE, 
+         #{img_ORGN_NM} , 
+         #{img_CHNG_NM},
+         'Y',
+         #{img_PATH},
+         DEFAULT)
+   </insert>
+   
+   <!-- 상품 수정 이미지 -->
+   <update id="tradeUpdateImage" parameterType="Image">
+      <foreach collection="list" item="item" separator=",">
+      UPDATE IMAGE
+         SET
+         BOARD_NO = NULL,
+         REVIEW_NO = NULL,
+         IMG_KIND = 'P',
+         IMG_CREATE_DT = SYSDATE,
+         IMG_ORGN_NM = #{item.img_ORGN_NM},
+         IMG_CHNG_NM = #{item.img_CHNG_NM},
+         IMG_STATUS = 'Y',
+         IMG_PATH = #{item.img_PATH}
+         WHERE USER_ID = #{item.user_ID} AND IMG_KIND = 'P' AND TRADE_NO = #{item.trade_NO}
+      </foreach>
+   </update>
+   
+   <!-- 상품 상세페이지 이미지 -->
+   <select id="tradeDetailImage" resultType="Image">
+      SELECT * FROM IMAGE
+      WHERE TRADE_NO = #{trade_NO} 
+      AND IMG_KIND = 'P' 
+      AND IMG_STATUS = 'Y'
+   </select>
+    
+   
+   
+   <!--  nsp Image -->
+   <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 비규격품 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+   <insert id="insertNspImage">
+   		INSERT INTO IMAGE 
+   		VALUES (IMG_NO_SEQ.NEXTVAL,
+   			    NULL,
+   			    NULL,
+   			    #{trade_NO},
+   			    #{user_ID},
+     			'B', 
+     			SYSDATE, 
+     			#{img_ORGN_NM},
+     			#{img_CHNG_NM},
+     			DEFAULT,
+     		    #{img_PATH},
+     		    DEFAULT)
+   </insert>
+   
+  
+   <select id="nspDetailImages" resultType="Image">
+   	SELECT * FROM IMAGE
+   	WHERE TRADE_NO = #{trade_NO} AND
+   		  IMG_KIND = 'B' AND
+   		  IMG_STATUS = 'Y'
+   </select>
+   
+   <update id="originImgDelete">
+   		UPDATE IMAGE
+   		SET IMG_STATUS = 'N'
+   		WHERE IMG_NO = #{img_NO}
+   </update>
+   
+    <insert id="insertNewNspImage">
+   		INSERT INTO IMAGE 
+   		VALUES (IMG_NO_SEQ.NEXTVAL,
+   			    NULL,
+   			    NULL,
+   			    #{trade_NO},
+   			    #{user_ID},
+     			'B', 
+     			SYSDATE, 
+     			#{img_ORGN_NM},
+     			#{img_CHNG_NM},
+     			DEFAULT,
+     		    #{img_PATH},
+     		    DEFAULT)
+   </insert>
+   
+   
+   
+   <!--  crowd Image -->
+   <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 크라우드 펀딩 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   <!--  Board Image -->
+   <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 자유게시판 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+   
+   <select id="selectBoardNo" resultType ="Integer">
+      SELECT BOARD_NO FROM BOARD
+   </select>
+   
+  <insert id="coummunityAddImage" parameterType="Image">
+        INSERT ALL
+       <foreach collection="list"  item="item" separator="," >       
+      INTO IMAGE VALUES (IMG_NO_SEQ.NEXTVAL,#{item.board_NO},NULL,NULL,#{item.user_ID},
+      'B', SYSDATE, #{item.img_ORGN_NM},#{item.img_CHNG_NM},DEFAULT,
+      #{item.img_PATH},DEFAULT)
+         SELECT * FROM DUAL
+      </foreach>
+       <selectKey resultType="Integer" order="AFTER" keyProperty="img_NO" keyColumn="img_NO">
+        SELECT IMG_NO_SEQ.CURRVAL FROM DUAL 
+    </selectKey>
+  </insert>
+   
+   
+   
+   
+   
+   <!--  User Profile  -->
+   <!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 프로필 사진 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+   
+   <insert id="signUpBasicProfileImg">
+      INSERT INTO IMAGE
+      VALUES(
+         IMG_NO_SEQ.nextval,
+         NULL,
+         NULL,
+         NULL,
+         #{user_ID}, 
+         'U',
+         SYSDATE,
+         'UserBasicProfile.jpg',
+         'UserBasicProfile.jpg',
+         DEFAULT,
+         '/resources/images',
+         DEFAULT
+      )   
+   </insert>
+   
+	<update id="userProfileChange"  parameterType="Image">
+		 <foreach collection="list"  item="item" separator="," > 
+		UPDATE IMAGE
+			SET 
+				IMG_ORGN_NM =  #{item.img_ORGN_NM}, 
+				IMG_PATH = #{item.img_PATH}, 
+				IMG_CREATE_DT = SYSDATE, 
+				IMG_STATUS = DEFAULT, 
+				IMG_THUMBNAIL = DEFAULT, 
+				IMG_CHNG_NM = #{item.img_CHNG_NM}
+			WHERE USER_ID = #{item.user_ID} AND IMG_KIND = 'U'
+		</foreach>
+	</update>
+   
+  
+   
+
+</mapper>

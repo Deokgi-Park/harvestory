@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+<settings>
+   <setting name="jdbcTypeForNull" value="NULL" />
+</settings>
+<typeAliases>
+		<typeAlias type="kr.ac.cropfit.model.Member" alias="Member" />
+		<typeAlias type="kr.ac.cropfit.model.Board" alias="Board" />
+		<typeAlias type="kr.ac.cropfit.model.Reply" alias="Reply" />
+		<typeAlias type="kr.ac.cropfit.model.Image" alias="Image" />
+		<typeAlias type="kr.ac.cropfit.model.Message" alias="Message" />
+		<typeAlias type="kr.ac.cropfit.model.Trade" alias="Trade" />
+	</typeAliases>
+	
+	<mappers>
+		<mapper resource="mybatis/member.xml" />
+		<mapper resource="mybatis/board.xml" /> <!-- Reply Mapper 겸용 -->
+		<mapper resource="mybatis/image.xml" />
+		<mapper resource="mybatis/message.xml" />
+		<mapper resource="mybatis/trade.xml" />
+	</mappers>
+	
+</configuration>
+

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="trade">
+
+	<select id="total" resultType="Integer">
+		SELECT COUNT(*)
+		FROM TRADE
+	</select>
+
+
+	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 포전매매 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+
+	<!-- 검색 및 페이지네이션 -->
+
+	<sql id="Search">
+		SELECT * FROM V_TRADE
+		<where>
+			<if test="searchValue != null">
+				(PRODUCT_TITLE LIKE CONCAT('%',CONCAT(#{searchValue},'%'))
+				OR
+				PRODUCT_CONTENT LIKE CONCAT('%',CONCAT(#{searchValue},'%'))
+				OR
+				USER_NAME LIKE CONCAT('%',CONCAT(#{searchValue},'%'))) AND
+			</if>
+			PRODUCT_STATUS = 'Y' AND PRODUCT_CATEGORY = 1 AND IMG_KIND = 'P'
+		</where>
+		ORDER BY TRADE_NO DESC
+	</sql>
+
+	<!-- 상품 페이지 -->
+	<select id="tradeList" resultType="Trade">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, sub.* FROM
+		(
+		<include refid="Search"></include>)
+		sub)       
+         <![CDATA[   
+            WHERE rnum >= ((#{page} - 1 ) * #{perPage} + 1 ) AND rnum <= (#{page} * #{perPage})
+            ]]>
+	</select>
+
+	<select id="tradeMyList" resultType="Trade">
+		SELECT * FROM V_TRADE
+		WHERE PRODUCT_STATUS = 'Y' AND PRODUCT_CATEGORY = 1 AND IMG_KIND = 'P' AND
+		USER_ID = #{user_ID}
+		ORDER BY TRADE_NO ASC
+	</select>
+
+	<!-- 상품 등록 -->
+	<select id="tradeNextVal" resultType="int">
+		SELECT TRADE_NO_SEQ.NEXTVAL
+		FROM DUAL
+	</select>
+
+	<insert id="tradeAdd">
+		INSERT INTO TRADE
+		VALUES(#{trade_NO},
+		#{user_ID},
+		1,
+		#{product_TITLE},
+		#{product_CONTENT},
+		#{product_PRICE},
+		1,
+		1,
+		'Y',
+		SYSDATE,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL)
+	</insert>
+
+
+	<!-- 상품 삭제 -->
+	<update id="tradeDelete">
+		UPDATE TRADE
+		SET PRODUCT_STATUS = 'N'
+		WHERE TRADE_NO = #{trade_NO}
+	</update>
+
+	<!-- 상품 업데이트 -->
+	<select id="tradeUpdateItem" resultType="trade">
+		SELECT *
+		FROM TRADE
+		WHERE TRADE_NO = #{trade_NO}
+	</select>
+
+	<update id="tradeUpdate">
+		UPDATE TRADE
+		SET TRADE_NO = #{trade_NO},
+		USER_ID = #{user_ID},
+		PRICE_NO = 1,
+		PRODUCT_TITLE = #{product_TITLE},
+		PRODUCT_CONTENT = #{product_CONTENT},
+		PRODUCT_PRICE = #{product_PRICE},
+		PRODUCT_CATEGORY = 1,
+		PRODUCT_KIND = 1,
+		PRODUCT_STATUS = 'Y'
+		WHERE TRADE_NO = #{trade_NO}
+	</update>
+
+	<!-- 상품 상세페이지 -->
+	<select id="tradeDetail" resultType="Trade">
+		SELECT *
+		FROM V_TRADE
+		WHERE PRODUCT_STATUS = 'Y' AND TRADE_NO = #{trade_NO} AND IMG_KIND = 'P'
+	</select>
+
+	<select id="otherTrade" resultType="Trade">
+		SELECT ROWNUM, A.*
+		FROM (
+		SELECT *
+		FROM V_TRADE
+		WHERE USER_NAME = #{user_NAME} AND PRODUCT_CATEGORY = 1 AND TRADE_NO != #{trade_NO}
+		AND PRODUCT_STATUS = 'Y'
+		ORDER BY PRODUCT_DATE DESC
+		) A
+   		<![CDATA[ WHERE ROWNUM <= 3 ]]>
+	</select>
+
+
+
+
+
+
+	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 비규격품 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+	<select id="nspNextVal" resultType="int">
+		SELECT TRADE_NO_SEQ.NEXTVAL
+		FROM DUAL
+	</select>
+
+	<insert id="nspWrite">
+		INSERT INTO TRADE
+		VALUES(#{trade_NO},
+		#{user_ID},
+		1,
+		#{product_TITLE},
+		#{product_CONTENT},
+		#{product_PRICE},
+		2,
+		1,
+		'Y',
+		SYSDATE,
+		NULL,
+		NULL,
+		NULL,
+		NULL,
+		NULL)
+	</insert>
+
+
+
+
+	<sql id="nspSearch">	
+		SELECT * FROM V_TRADE_LIST
+		<where>
+			<if test="searchValue != null">
+				(PRODUCT_TITLE LIKE CONCAT('%',CONCAT(#{searchValue},'%'))
+				OR
+				PRODUCT_CONTENT LIKE CONCAT('%',CONCAT(#{searchValue},'%'))
+				OR
+				USER_NAME LIKE CONCAT('%',CONCAT(#{searchValue},'%'))) AND
+			</if>
+			 PRODUCT_CATEGORY = 2 AND IMG_KIND = 'B'
+		</where>
+		ORDER BY TRADE_NO DESC
+	</sql>
+
+	<select id="nspList" resultType="Trade">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, sub.* FROM
+		(
+		<include refid="nspSearch"></include>)
+		sub)		 
+			<![CDATA[   
+	         WHERE rnum >= ((#{page} - 1 ) * #{perPage} + 1 ) AND rnum <= (#{page} * #{perPage})
+	      	]]>
+	</select>
+
+	<select id="nspDetailItem" resultType="Trade">
+		SELECT T.*, P.ITEM_NAME 
+		FROM TRADE T, PRICE P
+		WHERE T.PRICE_NO = P.PRICE_NO 
+			  AND TRADE_NO = #{trade_NO}
+	</select>
+
+	<update id="nspDelete">
+		UPDATE TRADE
+		SET PRODUCT_STATUS = 'N'
+		WHERE TRADE_NO = #{trade_NO}
+	</update>
+
+	<update id="nspUpdate">
+		UPDATE TRADE
+		SET PRODUCT_TITLE = #{product_TITLE},
+			PRODUCT_CONTENT = #{product_CONTENT},
+			PRODUCT_PRICE = #{product_PRICE},
+			PRODUCT_DATE = SYSDATE
+		WHERE TRADE_NO = #{trade_NO}
+	</update>
+
+
+	<!-- @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ 크라우드 펀딩 @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ -->
+
+</mapper>

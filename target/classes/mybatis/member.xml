@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="member">
+	
+	<select id="idDupCheck" resultType="Integer">
+		SELECT COUNT(*) FROM MEMBER
+		WHERE USER_ID = #{user_ID}
+	</select>
+	
+	
+	<insert id="signUp" parameterType="Member">
+		INSERT INTO MEMBER
+		VALUES(
+			#{user_EMAIL},
+			#{user_GRADE},
+			#{user_PW},
+			00000000000,
+			#{user_NAME},
+			'미입력',
+			#{user_EMAIL},
+			'미입력',
+			'Y',
+			0,
+			SYSDATE,
+			'N'
+		)
+	</insert>
+	
+	<select id="loginPWCheck" resultType="String">
+		SELECT USER_PW FROM MEMBER
+		WHERE USER_ID = #{user_ID}
+	</select>
+	
+	<select id="login" resultType="Member">
+		SELECT * FROM V_MEMBER_SESSION
+		WHERE USER_ID = #{user_ID} AND USER_PW = #{user_PW}
+	</select>
+	
+	<update id="userKeySetting">
+		UPDATE MEMBER
+		SET USER_ENROLL_KIND = #{key}
+		WHERE USER_ID = #{user_ID}
+	</update>
+	
+	<update id="alter_userKey_service">
+		UPDATE MEMBER
+		SET USER_ENROLL_KIND = 'Y'
+		WHERE USER_ID = #{user_ID}
+	</update>
+	
+	
+	<update id="infoChangeRequest">
+		UPDATE MEMBER
+		SET USER_PHONE = #{user_PHONE},
+			USER_NAME = #{user_NAME},
+			USER_ADDRESS = #{user_ADDRESS},
+			USER_ACCOUNT = #{user_ACCOUNT}
+		WHERE USER_ID = #{user_ID}
+	</update>
+	
+	
+	<select id="InfoChangedMember" resultType="Member">
+		SELECT * FROM V_MEMBER_SESSION
+		WHERE USER_ID = #{user_ID}
+	</select>
+	
+	<update id="myPasswordChng">
+		UPDATE MEMBER
+		SET USER_PW = #{user_PW}
+		WHERE USER_ID = #{user_ID}		
+	</update>
+	
+</mapper>

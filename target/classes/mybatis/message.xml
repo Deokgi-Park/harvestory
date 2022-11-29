@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="message">
+	
+	<select id="messageRecievedList" resultType="Message">
+		SELECT * FROM MESSAGE
+		WHERE MSG_WITH = #{user_ID} AND MSG_DELETE = 'N'
+		ORDER BY MSG_NO DESC
+	</select>
+	
+	<select id="messageSendList" resultType="Message">
+		SELECT * FROM MESSAGE
+		WHERE USER_ID = #{user_ID} AND MSG_DELETE = 'N'
+		ORDER BY MSG_NO DESC
+	</select>
+	
+	<select id="messageDeletedList" resultType="Message">
+		SELECT * FROM MESSAGE
+		WHERE MSG_WITH = #{user_ID} AND MSG_DELETE = 'Y'
+		ORDER BY MSG_NO DESC
+	</select>
+	
+	
+	<insert id="sendMsg">
+		INSERT INTO MESSAGE
+		VALUES (
+			MSG_NO_SEQ.NEXTVAL,
+			#{msg_WITH},
+			#{msg_WITH_NAME},
+			#{msg_CONTENT},
+			SYSDATE,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			#{user_ID},
+			#{user_NAME}
+		)
+	</insert>
+	
+	<insert id="sendMsgReply">
+			INSERT INTO MESSAGE
+			VALUES (
+			MSG_NO_SEQ.NEXTVAL,
+			#{msg_WITH},
+			#{msg_WITH_NAME},
+			#{msg_CONTENT},
+			SYSDATE,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			#{user_ID},
+			#{user_NAME}
+		)
+	</insert>
+	
+	<update id="recievedMsgAnswerChng">
+		UPDATE MESSAGE
+		SET MSG_ANSWER = 'Y'
+		WHERE MSG_NO = #{msg_NO}
+	</update>
+	
+	<update id="msgCheckStatusChange">
+		UPDATE MESSAGE
+		SET MSG_CHECK = 'Y'
+		WHERE MSG_NO = #{msg_NO}
+	</update>
+	
+	<update id="msgDelete">
+		UPDATE MESSAGE
+		SET MSG_DELETE = 'Y'
+		WHERE MSG_NO = #{msg_NO}
+	</update>
+	
+	<update id ="msgRestore">
+		UPDATE MESSAGE
+		SET MSG_DELETE = 'N'
+		WHERE MSG_NO = #{msg_NO}
+	</update>
+	
+</mapper>

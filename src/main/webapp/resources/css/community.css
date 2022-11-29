@@ -1,0 +1,366 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap');
+*{
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+input:focus {outline:0px solid #333;}
+a{
+    color: inherit;
+    text-decoration: none;
+    display: inline-block;
+}
+ul, ol{
+    list-style: none;
+}
+#index_cover{
+    position: relative;
+    width: 1900px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+#main_container{
+    position: relative;
+    width: 1750px;
+    height: 2000px;
+    margin: 0 75px;
+    box-sizing: border-box;
+    background: url(배경.jpg);
+    background-size: cover;
+}
+header{
+    position: relative;
+    width: 1450px;
+    margin: 0 auto;
+    height: 7%;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-size: 2000px;
+    background-position: bottom;
+    float: left;
+}
+
+article{
+    position: relative;
+    width: 100%;
+    height: 98%;
+    margin: 0 auto;
+    background: white;
+    box-sizing: border-box;
+    border-bottom: 5px white solid;
+}
+
+section{
+    position: relative;
+    width: 1150px;
+    height: 90%;
+    margin: 0 300px 0 0;
+    box-sizing: border-box;
+    float: left;
+}
+aside{
+    position: relative;
+    width: 300px;
+    height: 100%;
+    box-sizing: border-box;
+    transition: 0.5s;
+    z-index: 5;
+    float: left;
+}
+
+footer{
+    position: relative;
+    width: 1750px;
+    height: 300px;
+    margin: 0 auto;
+    background: rgb(238, 238, 238);
+}
+nav::after{
+    display: block;
+    content: "";
+    clear: both;
+}
+header::after{
+    display: block;
+    content: "";
+    clear: both;
+}
+section::after{
+    display: block;
+    content: "";
+    clear: both;
+}
+aside::after{
+    display: block;
+    content: "";
+    clear: both;
+}
+article::after{
+    display: block;
+    content: "";
+    clear: both;
+}
+footer::after{
+    display: block;
+    content: "";
+    clear: both;
+}
+
+
+/* 네비게이션 제작 */
+
+nav{
+    position: relative;
+    width: 1750px;
+    margin: 0 auto 0;
+    height: 100px;
+    z-index: 100;
+    box-shadow: 0px 7px 5px -7px #333;
+    border-bottom: 1px solid #aaa;
+    box-sizing: border-box;
+}
+nav>div>ul>li:hover::after{
+    display: block;
+    content: '';
+    margin: 5px 10%;
+    height: 3px;
+    width: 80%;
+    background: cyan;
+    animation: liner 1s;
+}
+
+@keyframes liner{ 
+    from {
+        width: 0%;
+    }
+    to { 
+        width: 80%;
+    } 
+}
+
+.underline{
+    width: 1750px;
+    height: 100%;
+    margin: auto;
+}
+.m_logo{
+    width: 20%;
+    height: 100%;
+    float: left;
+}
+.m_logo>a{
+    height: 100%;
+}
+.m_logo>a>img{
+    height: 100%;
+}
+.login_info{
+    width: 60%;
+    height: 100%;
+    float: left;
+    box-sizing: border-box;
+    padding: 30px 40px;
+}
+.login_info>li:nth-child(n+1):nth-child(-n+3){
+    width: 22%;
+    float: left;
+    font-size: 20px;
+    text-align: center;
+    color: black;
+    font-weight: bolder;
+}
+.login_info>li:nth-child(n+4):nth-child(-n+5){
+    width: 17%;
+    float: left;
+    font-size: 20px;
+    text-align: center;
+    color: black;
+    font-weight: bolder;
+}
+.login_cover{
+    position: relative;
+    width: 20%;
+    height: 100%;
+    float: left;
+    box-sizing: border-box;
+}
+.login_menu{
+    position: absolute;
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+    width: 200px;
+    height: 20%;
+    margin: 0 auto;
+
+}
+.login_menu>li{
+    width: 100px;
+    height: 100%;
+    line-height: 20px;
+    color: black;
+    float: left;
+    text-align: center;
+    border-right: 2px solid black;
+    box-sizing: border-box;
+    font-weight: bold;
+}
+.login_menu>li:nth-of-type(2){
+    border: 0
+}
+/* 헤더제작 */
+header>h1{
+    position: absolute;
+    bottom: 25px;
+    font-size: 2.5em;
+}
+
+/* 어사이트 메뉴 */
+aside>ul{
+    position: absolute;
+    width: 90%;
+    top: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+
+    box-sizing: border-box;
+}
+aside>ul>li{
+    font-size: 1em;
+    font-weight: bolder;
+    padding: 10px 20px;
+
+    box-sizing: border-box;
+}
+aside>ul>li:first-child{
+    font-size: 1.1em;
+    padding: 20px;
+
+    box-sizing: border-box;
+}
+aside li:hover>a::before{
+    display: inline-block;
+    width: 40px;
+    content: '';
+    height: 3px;
+    margin-right: 5px;
+    margin-bottom: 4px;
+    background: cyan;
+    animation: liner2 0.5s;
+}
+@keyframes liner2{ 
+    from {
+        width: 0px;
+    }
+    to { 
+        width: 40px;
+        margin-right: 5px;
+    } 
+}
+/* 검색창 기본 */
+.search{
+    position: relative;
+    width: 500px;
+    height: 30px;
+    margin: 50px 30px 10px auto;
+    color: black;
+    right: 0;
+}
+.search>input{
+    width: 100%;
+    border:0;
+    border-bottom:2px solid black;
+    background: rgba(0, 0, 0, 0);
+    text-align: center;
+    margin: 0 auto;
+    padding: 4px 30px 1px;
+    box-sizing: border-box;
+    font-size: 20px;
+    color: black;
+}
+.search>input::placeholder{
+    color: black;
+}
+.search>button{
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    background: rgba(0, 0, 0, 0);
+    border: 0;
+    right: 0;
+    box-sizing: border-box;
+    cursor: pointer;
+    text-align: center;
+    margin: 2px 0 0 0;
+    color: black;
+}
+.search>button>i{
+    padding: 2px;
+    font-size: 20px;
+}
+
+/* article */
+.replyUpdateContent{
+	display:none;
+}
+
+/* 임시풋터 */
+footer>div{
+    position: relative;
+    box-sizing: border-box;
+    padding: 20px;
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+    height: 300px;
+}
+.bottom_logo{
+    position: relative;
+    width: 30%;
+    height: 100%;
+    float: left;
+}
+.bottom_logo>img{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-filter: grayscale(100%);
+    filter: gray;
+}
+#service_name_area{
+    width: 70%;
+    height: 100%;
+    float: left;
+    padding: 45px;
+    box-sizing: border-box;
+    color: #888;
+}
+img[alt="하단로고"]{
+    width: 150px;
+}
+
+
+
+/* 아이콘 */
+.up{
+    position: fixed;
+    background: rgb(216, 216, 216);
+    width: 50px;
+    height: 50px;
+    z-index: 5;
+    right: 50px;
+    bottom: 30px;   
+}
+.up>h4{
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    line-height: 50px;  
+}
+.up>h4>a{
+    display: block;
+    width: 100%;
+    height: 100%;
+    font-size: 2em;
+}

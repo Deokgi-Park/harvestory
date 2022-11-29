@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<resultMap type="Board" id="boardResultSet">
+		<id property="board_NO" column="BOARD_NO"/>
+		<result property="user_ID" column="USER_ID"/>
+		<result property="board_TITLE" column="BOARD_TITLE"/>
+		<result property="board_CONTENT" column="BOARD_CONTENT"/>
+		<result property="board_STATUS" column="BOARD_STATUS" />
+		<result property="board_DATE" column="BOARD_DATE" />
+		<result property="board_KIND" column="BOARD_KIND" />
+	</resultMap>
+	
+	<!-- 게시글 -->
+
+	<sql id="communitySearch">	<!-- 쿼리 재활용 하는 방법 ( <include refid=""> Tag 사용 )-->
+		SELECT * FROM V_BOARD
+		<where>
+			<if test="searchValue != null">
+				(BOARD_TITLE LIKE CONCAT('%',CONCAT(#{searchValue},'%'))
+		         OR
+		         BOARD_CONTENT LIKE CONCAT('%',CONCAT(#{searchValue},'%'))) AND
+			</if>
+			 BOARD_STATUS = 'Y' AND BOARD_KIND = 'C'
+			
+		</where>
+		ORDER BY BOARD_NO DESC
+	</sql>
+	
+	<select id="communityList" resultType="Board">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, sub.* FROM
+				(<include refid="communitySearch"></include>) sub)		 
+			<![CDATA[   
+	         WHERE rnum >= ((#{page} - 1 ) * #{perPage} + 1 ) AND rnum <= (#{page} * #{perPage})
+	      	]]>
+	</select>
+	
+	<insert id="communityWrite">
+		INSERT INTO BOARD
+		VALUES(BOARD_NO_SEQ.nextval, #{user_ID}, #{board_TITLE}, #{board_CONTENT}, 'Y', SYSDATE, 'C', null)
+	</insert>
+	
+	<select id="communityDetail" resultType="Board">
+		SELECT * FROM V_BOARD
+		WHERE BOARD_NO = #{board_NO} AND BOARD_KIND = 'C'
+	</select>
+	
+	<update id="communityDetailUpdate">
+		UPDATE BOARD
+		SET BOARD_TITLE = #{board_TITLE}, BOARD_CONTENT = #{board_CONTENT}
+		WHERE BOARD_NO = #{board_NO} 
+	</update>
+	
+	<update id="communityDelete">
+		UPDATE BOARD 
+		SET BOARD_STATUS = 'N'
+		WHERE BOARD_NO = #{board_NO}
+	</update>
+	
+	
+	
+	<!-- 댓글 -->
+	<select id="communityReplyList" resultType="Reply">
+		SELECT R.*, M.USER_NAME 
+		FROM REPLY R, MEMBER M
+		WHERE R.REPLY_WRITER = M.USER_ID AND BOARD_NO = #{board_NO} AND REPLY_STATUS = 'Y'
+		ORDER BY REPLY_NO ASC
+	</select>
+	
+	
+	<insert id="communityReplyWrite" parameterType="Reply">
+		INSERT INTO REPLY
+		VALUES(REPLY_NO_SEQ.nextval, #{board_NO}, #{reply_CONTENT}, SYSDATE, 'Y', #{reply_WRITER})
+	</insert>
+
+	<!--  댓글 수정 필요 -->
+	<update id="communityReplyUpdate">
+		UPDATE REPLY
+		SET REPLY_CONTENT = #{reply_CONTENT}
+		WHERE REPLY_NO = #{reply_NO}
+	</update>
+	
+	<update id="communityReplyDelete">
+		UPDATE REPLY
+		SET REPLY_STATUS = 'N'
+		WHERE BOARD_NO = #{board_NO} AND REPLY_NO = #{reply_NO}
+	</update>
+	
+	
+	
+	
+	<!-- FAQ -->
+	<select id ="total" resultType ="Integer">
+      SELECT COUNT(*) 
+      FROM BOARD
+   </select>
+	
+	<sql id="faqSearch">	<!-- 쿼리 재활용 하는 방법 ( <include refid=""> Tag 사용 )-->
+		SELECT * FROM BOARD 
+		<where>
+			<if test="searchValue != null">
+				(BOARD_TITLE LIKE CONCAT('%',CONCAT(#{searchValue},'%'))
+		         OR
+		         BOARD_CONTENT LIKE CONCAT('%',CONCAT(#{searchValue},'%'))) AND
+			</if>
+			 BOARD_STATUS = 'Y' AND BOARD_KIND = 'F'
+			
+		</where>
+		ORDER BY BOARD_NO DESC
+	</sql>
+	
+	<select id="faqList" resultType="Board">
+		SELECT * FROM
+		(SELECT ROWNUM rnum, sub.* FROM
+				(<include refid="faqSearch"></include>) sub)		 
+			<![CDATA[   
+	         WHERE rnum >= ((#{page} - 1 ) * #{perPage} + 1 ) AND rnum <= (#{page} * #{perPage})
+	      	]]>
+	</select>
+	
+	<insert id="faqWrite">
+		INSERT INTO BOARD
+		VALUES(BOARD_NO_SEQ.nextval, #{user_ID}, #{board_TITLE}, #{board_CONTENT}, 'Y', SYSDATE, 'F', null)
+	</insert>
+	
+	<update id="faqDelete">
+		UPDATE BOARD
+		SET BOARD_STATUS = 'N'
+		WHERE BOARD_NO = #{board_NO}
+	</update>
+	
+	<select id="faqUpdateInfo" resultType="Board">
+		SELECT * FROM BOARD
+		WHERE BOARD_NO = #{board_NO}
+	</select>
+	
+	<update id="faqUpdateRq">
+		UPDATE BOARD
+		SET BOARD_TITLE = #{board_TITLE},
+			BOARD_CONTENT = #{board_CONTENT},
+			BOARD_DATE = SYSDATE
+		WHERE BOARD_NO = #{board_NO}
+	</update>
+	
+	
+	<!-- ///////////////////////////////////////////////////////////////////////////////////////// -->
+	<!-- 1 : 1 문의 -->
+	
+	<select id="myAskList" resultType="Board">
+		SELECT * FROM BOARD
+		WHERE USER_ID = #{user_ID} AND BOARD_KIND = 'A'
+	</select>
+	
+	<insert id="askSend">
+		INSERT INTO BOARD
+		VALUES(BOARD_NO_SEQ.nextval, #{user_ID}, #{board_TITLE}, #{board_CONTENT}, 'Y', SYSDATE, 'A', NULL)	   
+	</insert>
+	
+	<select id="myAskItem" resultType="Board">
+		SELECT * FROM BOARD
+		WHERE BOARD_NO = #{board_NO} AND BOARD_KIND = 'A'
+	</select>
+	
+	
+</mapper>
